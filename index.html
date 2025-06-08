@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luxury Birthday Countdown</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    :root {
+      --primary: #9c27b0;
+      --secondary: #e91e63;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    input[type="number"] {
+      appearance: textfield;
+    }
+    
+    .glass-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+    
+    .birthday-emoji {
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(-10px);
+      }
+      50% {
+        transform: translateY(10px);
+      }
+    }
+    
+    .countdown-number {
+      position: relative;
+      display: inline-block;
+      margin: 0 5px;
+      padding: 10px 0;
+    }
+    
+    .countdown-number::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .input-label {
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 0.8rem;
+      padding: 0 5px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="text-white">
+  <!-- Confetti Container -->
+  <div id="confetti" class="confetti"></div>
+  
+  <div class="container mx-auto px-4 py-10 flex flex-col items-center justify-center min-h-screen">
+    <div class="max-w-3xl w-full relative z-10">
+      <!-- Header -->
+      <div class="text-center mb-12 animate__animated animate__fadeInDown">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+          <span class="birthday-emoji">🎂</span> Birthday Countdown
+        </h1>
+        <p class="text-lg text-white/80 max-w-lg mx-auto">
+          Discover exactly how long until your special day in stunning detail
+        </p>
+      </div>
+      
+      <!-- Input Section -->
+      <div class="glass-box p-8 mb-8 animate__animated animate__zoomIn">
+        <h2 class="text-2xl font-semibold mb-6 text-center">Enter Your Birth Details</h2>
+        
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="relative">
+            <span class="input-label bg-gradient-to-r from-purple-500 to-pink-500 rounded-full px-2">DAY</span>
+            <input type="number" id="day" placeholder="28" min="1" max="31" maxlength="2"
+              class="w-full px-5 py-3 bg-white/10 rounded-xl border border-white/20 text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+          </div>
+          
+          <div class="relative">
+            <span class="input-label bg-gradient-to-r from-purple-500 to-pink-500 rounded-full px-2">MONTH</span>
+            <input type="number" id="month" placeholder="8" min="1" max="12" maxlength="2"
+              class="w-full px-5 py-3 bg-white/10 rounded-xl border border-white/20 text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+          </div>
+          
+          <div class="relative">
+            <span class="input-label bg-gradient-to-r from-purple-500 to-pink-500 rounded-full px-2">YEAR</span>
+            <input type="number" id="year" placeholder="1990" min="1900" max="2100" maxlength="4"
+              class="w-full px-5 py-3 bg-white/10 rounded-xl border border-white/20 text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+          </div>
+        </div>
+        
+        <div class="flex justify-center">
+          <button id="startBtn" 
+            class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold tracking-wide shadow-lg hover:shadow-xl hover:from-purple-500 hover:to-pink-500 transition-all transform hover:scale-105">
+            Calculate My Birthday Countdown ✨
+          </button>
+        </div>
+      </div>
+      
+      <!-- Results Section -->
+      <div id="result" class="glass-box p-8 grid grid-cols-1 md:grid-cols-2 gap-8 animate__animated animate__zoomIn hidden">
+        <div class="flex flex-col justify-center">
+          <h3 class="text-2xl font-semibold mb-4">🎉 Birthday Details</h3>
+          <p class="text-xl mb-2">You are currently <span id="current-age" class="text-2xl font-bold text-purple-300">0</span> years old</p>
+          <p class="text-xl">You'll be turning <span id="next-age" class="text-2xl font-bold text-pink-300">0</span> next birthday!</p>
+          
+          <div class="mt-6 text-white/70">
+            <p id="birthday-message" class="italic text-pink-200"></p>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-2xl font-semibold mb-4 text-center">⏳ Time Remaining</h3>
+          <div id="countdown" class="text-center">
+            <div class="inline-grid grid-cols-4 gap-2">
+              <div class="countdown-number text-5xl font-bold" data-label="DAYS">
+                <span id="days">00</span>
+              </div>
+              <div class="countdown-number text-5xl font-bold" data-label="HOURS">
+                <span id="hours">00</span>
+              </div>
+              <div class="countdown-number text-5xl font-bold" data-label="MINUTES">
+                <span id="minutes">00</span>
+              </div>
+              <div class="countdown-number text-5xl font-bold" data-label="SECONDS">
+                <span id="seconds">00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-white/60 text-sm">
+      <p>Made with ❤️ for your special day | © <span id="current-year"></span></p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    const dayInput = document.getElementById("day");
+    const monthInput = document.getElementById("month");
+    const yearInput = document.getElementById("year");
+    const startBtn = document.getElementById("startBtn");
+    const resultBox = document.getElementById("result");
+    const currentAgeEl = document.getElementById("current-age");
+    const nextAgeEl = document.getElementById("next-age");
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const birthdayMessageEl = document.getElementById("birthday-message");
+    const confettiContainer = document.getElementById("confetti");
+    
+    let intervalId = null;
+    let confettiIntervalId = null;
+    
+    // Date validation function
+    function isValidDate(d, m, y) {
+      const date = new Date(y, m - 1, d);
+      return (
+        date.getFullYear() === y &&
+        date.getMonth() === m - 1 &&
+        date.getDate() === d
+      );
+    }
+    
+    // Generate random messages
+    function getBirthdayMessage(daysLeft) {
+      const messages = [
+        "The countdown to your special day begins!",
+        "Your birthday is closer than you think!",
+        "Start planning your celebration!",
+        "Get ready for an amazing birthday!",
+        "The best day of the year is coming up!"
+      ];
+      
+      if (daysLeft < 7) {
+        return "It's almost here! Get excited!";
+      } else if (daysLeft < 30) {
+        return "Not long now until your big day!";
+      } else {
+        return messages[Math.floor(Math.random() * messages.length)];
+      }
+    }
+    
+    // Create confetti effect
+    function createConfetti() {
+      const colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'];
+      
+      if (confettiIntervalId) clearInterval(confettiIntervalId);
+      
+      confettiIntervalId = setInterval(() => {
+        const confetti = document.createElement('div');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.width = Math.random() * 10 + 5 + 'px';
+        confetti.style.height = Math.random() * 10 + 5 + 'px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.position = 'absolute';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.opacity = Math.random() + 0.1;
+        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+        
+        // Set animation keyframes dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes fall {
+            to {
+              transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+            }
+          }
+        `;
+        document.head.appendChild(style);
+        
+        confettiContainer.appendChild(confetti);
+        
+        // Remove confetti after animation ends
+        setTimeout(() => {
+          confetti.remove();
+          style.remove();
+        }, 5000);
+      }, 50);
+      
+      setTimeout(() => {
+        clearInterval(confettiIntervalId);
+        confettiIntervalId = null;
+      }, 3000);
+    }
+    
+    function calculateBirthday() {
+      const day = parseInt(dayInput.value);
+      const month = parseInt(monthInput.value);
+      const year = parseInt(yearInput.value);
+      
+      if (!day || !month || !year) {
+        alert("Please complete your birth date (day/month/year)");
+        return;
+      }
+      
+      if (!isValidDate(day, month, year)) {
+        alert("Please enter a valid date.");
+        return;
+      }
+      
+      const now = new Date();
+      const birthdayThisYear = new Date(now.getFullYear(), month - 1, day);
+      let nextBirthday;
+      
+      // If birthday has already passed this year
+      if (now > birthdayThisYear) {
+        nextBirthday = new Date(now.getFullYear() + 1, month - 1, day);
+      } else {
+        nextBirthday = birthdayThisYear;
+      }
+      
+      const currentAge = now.getFullYear() - year - (now < birthdayThisYear ? 1 : 0);
+      const nextAge = currentAge + 1;
+      
+      currentAgeEl.textContent = currentAge;
+      nextAgeEl.textContent = nextAge;
+      birthdayMessageEl.textContent = getBirthdayMessage(Math.floor((nextBirthday - now) / (1000 * 60 * 60 * 24)));
+      
+      // If birthday is today
+      if (now.toDateString() === birthdayThisYear.toDateString()) {
+        birthdayMessageEl.textContent = "HAPPY BIRTHDAY! 🎉🎉🎉";
+        createConfetti();
+      }
+      
+      if (intervalId) clearInterval(intervalId);
+      
+      function updateCountdown() {
+        const current = new Date();
+        const diff = nextBirthday - current;
+        
+        if (diff <= 0) {
+          clearInterval(intervalId);
+          birthdayMessageEl.textContent = "HAPPY BIRTHDAY! 🎉🎉🎉";
+          createConfetti();
+          return;
+        }
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        
+        daysEl.textContent = days.toString().padStart(2, '0');
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+      }
+      
+      updateCountdown();
+      intervalId = setInterval(updateCountdown, 1000);
+      
+      // Show results with animation
+      resultBox.classList.remove("hidden");
+      resultBox.classList.add("animate__animated", "animate__zoomIn");
+    }
+    
+    startBtn.addEventListener("click", calculateBirthday);
+    
+    // Auto-advance inputs
+    [dayInput, monthInput, yearInput].forEach(input => {
+      input.addEventListener('input', function(e) {
+        if (this.value.length > this.maxLength) {
+          this.value = this.value.slice(0, this.maxLength);
+        }
+        
+        if (this.value.length === this.maxLength) {
+          const nextInput = this.nextElementSibling || 
+                           this.parentElement.nextElementSibling?.querySelector('input');
+          if (nextInput) nextInput.focus();
+        }
+      });
+      
+      // Set max lengths
+      if (input === dayInput || input === monthInput) {
+        input.maxLength = 2;
+      } else if (input === yearInput) {
+        input.maxLength = 4;
+      }
+    });
+    
+    // Auto-focus first input
+    dayInput.focus();
+  </script>
+</body>
+</html>
